@@ -1,0 +1,73 @@
+---
+title: 'Dashboard Project: Milestone I'
+subtitle: 'Data Warehousing and Business Intelligence - Computing Lab'
+author: 
+- "Ivan Vallejo Vall"
+- "Saurav Poudel"
+- "Daniel Velásquez Vergara"
+date: "October 14, 2016"
+header-includes:
+output:
+  pdf_document:
+    fig_caption: no
+    highlight: kate
+    keep_tex: no
+    number_sections: yes
+  html_document:
+    highlight: kate
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+  rmarkdown::tufte_handout:
+    highlight: kate
+    keep_tex: no
+    md_extensions: +raw_tex+multiline_tables
+  tufterhandout::html_tufte_handout:
+    highlight: kate
+    keep_md: no
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+fontsize: 12pt
+---
+
+
+```{r, knitr_options, include=FALSE}
+    
+    # loading in required packages
+    if (!require("knitr")) install.packages("knitr"); library(knitr)
+    if (!require("rmarkdown")) install.packages("rmarkdown"); library(rmarkdown)
+    # some useful global defaults
+    opts_chunk$set(warning=FALSE, message=FALSE, include=TRUE, echo=TRUE, cache=TRUE, cache.comments=FALSE, comment='##')
+
+    # output specific defaults
+    output <- opts_knit$get("rmarkdown.pandoc.to")
+    if (output=="html") opts_chunk$set(fig.width=10, fig.height=5)
+    if (output=="latex") opts_chunk$set(fig.width=6,  fig.height=4, 
+        dev = 'png', dev.args=list(family="Arial"))
+```
+
+# Objective
+
+The objective of the project is to propose certain analytics to help policy makers to ensure future telecom development.
+
+# Dataset 
+
+* Macroeconomic indicators by coutry available at the World bank open data website  [http://data.worldbank.org](http://data.worldbank.org),
+
+* ITU data on telecom uptake time series by country [http://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx] (http://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx). The data available covers 15 years, and more than 200 countries per indicator,
+
+* Google broadband pricing data at [https://policybythenumbers.googleblog.com](https://policybythenumbers.googleblog.com), available for 3/4 years.
+
+# Analytics
+
+The analysys of these data will allow policy makers to:
+
+* undertand the relation between the ITU telecom indicators and certain macroeconomic measures, and its efect on broadband prices among different countries,  
+
+* predict the telecom situation in the future and make investment decision in the present that would ensure telecom development in certain countries.
+
+
+
