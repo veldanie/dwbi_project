@@ -2,9 +2,7 @@
 title: 'Dashboard Project: Milestone I'
 subtitle: 'Data Warehousing and Business Intelligence - Computing Lab'
 author: 
-- "Ivan Vallejo Vall"
-- "Saurav Poudel"
-- "Daniel Velásquez Vergara"
+- "Ivan Vallejo Vall, Saurav Poudel & Daniel Velásquez Vergara"
 date: "October 14, 2016"
 header-includes:
 output:
@@ -31,6 +29,7 @@ output:
     toc: yes
     toc_depth: 2
 fontsize: 12pt
+linkcolor: blue
 ---
 
 
@@ -51,23 +50,20 @@ fontsize: 12pt
 
 # Objective
 
-The objective of the project is to propose certain analytics to help policy makers to ensure future telecom development.
+The objective of the project is to produce analytics to inform policy makers and development banks about telecommunication development and guide their investments in the sector. 
 
 # Dataset 
+ 
+* Data from the International Telecommunication Union (ITU) on service uptake by country, available at <http://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx> (Excel format). Data cover 15 years and more than 200 countries for four selected indicators;
 
-* Macroeconomic indicators by coutry available at the World bank open data website  [http://data.worldbank.org](http://data.worldbank.org),
+* Macroeconomic indicators by country from the World Bank open data website <http://data.worldbank.org>, accessible by means of an API (xml format). A subset of the over 600 indicators available will be selected according to their relevance vis-à-vis the telecommunication sector. 
 
-* ITU data on telecom uptake time series by country [http://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx] (http://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx). The data available covers 15 years, and more than 200 countries per indicator,
-
-* Google broadband pricing data at [https://policybythenumbers.googleblog.com](https://policybythenumbers.googleblog.com), available for 3/4 years.
+* Google broadband pricing data for four years, available at <https://policybythenumbers.googleblog.com> (csv format). Data have a global coverage and include several operators per country, and for each operator the prices of diverse plans. 
 
 # Analytics
 
-The analysys of these data will allow policy makers to:
+The analysis of these data will be divided into two phases:
 
-* undertand the relation between the ITU telecom indicators and certain macroeconomic measures, and its efect on broadband prices among different countries,  
+1. Modelling of the ITU telecom indicators using the World Bank's and Google's data. This will inform policy makers on the relation between the telecommunication indicators and certain macroeconomic measures and broadband prices in different countries;  
 
-* predict the telecom situation in the future and make investment decision in the present that would ensure telecom development in certain countries.
-
-
-
+2. Forecasting future telecommunication development based on the models developed in (1) with a view to informing current investments from development banks (e.g. WB, IDB, EBRD-EIB). In particular, the analysis will try to identify countries will be worse off in terms of telecommunication development by 2020, thus helping allocate investment to those countries which need it most.
