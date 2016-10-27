@@ -1,0 +1,83 @@
+---
+title: 'Dashboard Project: Milestone II'
+subtitle: 'Data Warehousing and Business Intelligence - Computing Lab'
+author: 
+- "Ivan Vallejo Vall, Saurav Poudel & Daniel Velásquez Vergara"
+date: "October 28, 2016"
+header-includes:
+output:
+  pdf_document:
+    fig_caption: no
+    highlight: kate
+    keep_tex: no
+    number_sections: yes
+  html_document:
+    highlight: kate
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+  rmarkdown::tufte_handout:
+    highlight: kate
+    keep_tex: no
+    md_extensions: +raw_tex+multiline_tables
+  tufterhandout::html_tufte_handout:
+    highlight: kate
+    keep_md: no
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+fontsize: 12pt
+linkcolor: blue
+---
+
+
+```{r, knitr_options, include=FALSE}
+    
+    # loading in required packages
+    if (!require("knitr")) install.packages("knitr"); library(knitr)
+    if (!require("rmarkdown")) install.packages("rmarkdown"); library(rmarkdown)
+    # some useful global defaults
+    opts_chunk$set(warning=FALSE, message=FALSE, include=TRUE, echo=TRUE, cache=TRUE, cache.comments=FALSE, comment='##')
+
+    # output specific defaults
+    output <- opts_knit$get("rmarkdown.pandoc.to")
+    if (output=="html") opts_chunk$set(fig.width=10, fig.height=5)
+    if (output=="latex") opts_chunk$set(fig.width=6,  fig.height=4, 
+        dev = 'png', dev.args=list(family="Arial"))
+```
+
+# Dashboard Views
+
+The dataset for this project is composed by International Telecommunication Union (ITU) indicators by country, macroeconomic indicators by country, and Google broadband pricing data. Based on this information, some of the views that will be availble in the dashboard are the following:
+
+* _International Telecommunication Union (ITU) indicators by countries_. The users will have acces to a view in which key ITU indicators are ploted for each country for a particular time period. The graph will allow the users to identify groups of contries with different telecom development. The countries under study will be classifed according to its telecom development level and the results will be presented in the view. Additionally, users will be able to see the time evolution of key ITU indicators for certain countries. 
+
+<!-- * World Bank Macro indicators -->
+
+* _ITU Indicators vs. Macro Indicators_. There will be a view in which key ITU indicators are ploted against certain macroeconomic variables for each country for a particular time period. The macroeconomic variables exhibited in the view are those identifified as important (influential) indicators during the analysis of the data. 
+ 
+* _ITU Indicators vs. Broadband pricing data_. This view will show key ITU indicators ploted against broadband pricing data for each country for a particular time period. The prices will be transformed in order to make them comparable between countries. 
+
+# Analytics
+
+## Variable Selection
+
+One of the goals of the analysis is to identify which Macro indicators explain telecom development.To do so, one measure of telecom development will be regressed against several macroeconomic indicatators. The objetive is to apply a regularized regression technique using standardized data from different countries and time periods. The results of the analysis will allow us to select key influential macroeconomic indicators. 
+
+Another important objetive of the analysis is to detect outliers. A priori, it is expected to find a positive relation between economic and telecom development. In this context, an outlier might represent a country that, in a particular time, exhibited poor economic performance but high telecom improvement. This case should receive special attention from a policy maker. 
+
+## Classfication Analysis
+
+Another goal of the project is to identify specific countries that demand special attention from a policy marker. For this, we will implement a classification procedure incorporating various ITU and macroeconomic indicators.  
+
+## Pricing Analysis
+
+An additional aim of the project is to assess the relation between telecom development and broadband prices. The objetive is to analize different models that can capture the causal relation between these variables. 
+
+               
+<!-- Prediction : Prediction of the future of telecommunication development of the country at 2020.Special focus given to the countries that will have poor development of telecommunication on 2020, so that they can be taken into consideration for now in their development.(via allocation of funds) -->
+               
+
+            
