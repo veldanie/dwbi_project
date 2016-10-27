@@ -48,36 +48,47 @@ linkcolor: blue
         dev = 'png', dev.args=list(family="Arial"))
 ```
 
-# Dashboard Views
+# Analysis and Dashboard Views
 
-The dataset for this project is composed by International Telecommunication Union (ITU) indicators by country, macroeconomic indicators by country, and Google broadband pricing data. Based on this information, some of the views that will be availble in the dashboard are the following:
+An initial dashboard view will present the context of the project, i.e. the digital divide across countries and the effects it has in social and economic development. 
 
-* _International Telecommunication Union (ITU) indicators by countries_. The users will have acces to a view in which key ITU indicators are ploted for each country for a particular time period. The graph will allow the users to identify groups of contries with different telecom development. The countries under study will be classifed according to its telecom development level and the results will be presented in the view. Additionally, users will be able to see the time evolution of key ITU indicators for certain countries. 
-
-<!-- * World Bank Macro indicators -->
-
-* _ITU Indicators vs. Macro Indicators_. There will be a view in which key ITU indicators are ploted against certain macroeconomic variables for each country for a particular time period. The macroeconomic variables exhibited in the view are those identifified as important (influential) indicators during the analysis of the data. 
+In order to illustrate the current situation worldwide, a map will be shown with countries colored according to the percentage of Internet users or some [alternative visualisation](geography.oii.ox.ac.uk/?page=internet-population-and-penetration).     
  
-* _ITU Indicators vs. Broadband pricing data_. This view will show key ITU indicators ploted against broadband pricing data for each country for a particular time period. The prices will be transformed in order to make them comparable between countries. 
+In addition, the first view will introduce the two types of analysis carried out to address the business questions (see 1.1 and 1.2) and link to them. 
 
-# Analytics
+## Analysis of the links between telecom and socio-economic development 
+One or more selected indicators from the International Telecommunication Union (ITU) (e.g. percentage of Internet users) will be modelled based on the World Bank (WB) macroeconomic indicators and Google's broadband pricing data. The dependent variable will be the ITU indicator per country per year, and the independent/control variables will be selected from the WB and Google's datasets. 
 
-## Variable Selection
+Given the size of the possible explanatory variables (over 600 variables just in the WB database), statistical methods for variable selection (e.g. models based on singular value decomposition or strong regularization terms) will be explored in order to identify the subset of variables that have the most explanatory power.
 
-One of the goals of the analysis is to identify which Macro indicators explain telecom development.To do so, one measure of telecom development will be regressed against several macroeconomic indicatators. The objetive is to apply a regularized regression technique using standardized data from different countries and time periods. The results of the analysis will allow us to select key influential macroeconomic indicators. 
+In order to extract from the developed model some conclusions of relevance for policy-makers, econometric methods will be considered in order to deal with interpretation issues such as omitted variable bias, multicollinearity and correlation vs causality. 
 
-Another important objetive of the analysis is to detect outliers. A priori, it is expected to find a positive relation between economic and telecom development. In this context, an outlier might represent a country that, in a particular time, exhibited poor economic performance but high telecom improvement. This case should receive special attention from a policy maker. 
+A dashboard view will present the results of this section, including:
 
-## Classfication Analysis
+* __ITU indicator modelled and fit__. The result of the fitted model against the actual values for two years (e.g. 2005 and 2015). The outliers will be highlighted, so that policy-makers can easily identify those countries that are under- and outperforming the rest (e.g. with similar GDP p.c. have higher % Internet users). If some dynamism is possible in the chart, it will be incorporated (e.g. user can select the year for which the results are to be shown or can get some information on each datapoint when moving the pointer on it).
 
-Another goal of the project is to identify specific countries that demand special attention from a policy marker. For this, we will implement a classification procedure incorporating various ITU and macroeconomic indicators.  
+* __Explanatory variables__. List of the coefficients of the model (if many retained, just the most relevant), with some key statistical information for each of them in order to evaluate their significance and robustness.  
 
-## Pricing Analysis
+* __Top and bottom performers__. List of out- and underperformers, based on some aggregate calculation of the results of all years analysed (2000-2015).
 
-An additional aim of the project is to assess the relation between telecom development and broadband prices. The objetive is to analize different models that can capture the causal relation between these variables. 
+* __Top and bottom performers__. Conclusions: a short text summarizing the results of the model and the main messages for policy-makers.
 
-               
-<!-- Prediction : Prediction of the future of telecommunication development of the country at 2020.Special focus given to the countries that will have poor development of telecommunication on 2020, so that they can be taken into consideration for now in their development.(via allocation of funds) -->
-               
 
-            
+## Identification of the priority countries for telecom development aid  
+ITU identifies annually a number of countries as being the world's least connected countries (LCCs) based on a combination of  telecommunication indicators for each country. About 40 countries are LCCs out of a total 165 countries with data available. 
+
+Unfortunately, a number of developing countries do not produce telecommunication statistics, and therefore it is not known whether they are LCCs or not. For several of these countries data from the World Bank database and Google price benchmarking are available. 
+
+These data will be used to develop a classification model in order to fill in the blanks in the map of LCCs. Because data availability will be reduced and limit the performance of the model, the results will be presented with some measure of uncertainty associated with the prediction.
+
+The model will also be used to predict those countries that will be LCCs by 2020, with a view to helping development banks (e.g. WB, IDB) identify the countries most in need of aid. 
+
+In order to predict the 2020 values, some rough assumptions will be made on the evolution of the variables used in the classification model. For instance, projecting them based on similar growth rates in 2015-2020 as in the previous five years and/or alternative scenarios.      
+
+A dashboard view will present the results of this section, including:
+
+* __Least Connected Countries 2016__. A global map with the LCCs highlighted. The results of the classification model will be marked, so that it is evident which previously unclassified countries are predicted to be LCCs and which not. The uncertainty of the predictions will be somehow represented graphically in the map.   
+ 
+* __Least Connected Countries 2020__. Similar to the previous map, but with the predicted LCCs for 2020. The countries predicted to leave the LCC category in the period 2016-2020 will be highlighted to inform development banks of those countries that should not be a priority anymore. If there is more than one scenario, more than one map will be shown.    
+
+* __Priority countries in 2016 and in 2020__. Conclusions: a short text summarizing the results of the classification model and the main messages to development banks and international agencies active in the area of telecommunication aid.
