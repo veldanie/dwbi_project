@@ -1,0 +1,68 @@
+---
+title: 'Dashboard Project: Milestone III'
+subtitle: 'Data Warehousing and Business Intelligence - Computing Lab'
+author: 
+- "Ivan Vallejo Vall, Saurav Poudel & Daniel Velásquez Vergara"
+date: "November 11, 2016"
+header-includes:
+output:
+  pdf_document:
+    fig_caption: no
+    highlight: kate
+    keep_tex: no
+    number_sections: yes
+  html_document:
+    highlight: kate
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+  rmarkdown::tufte_handout:
+    highlight: kate
+    keep_tex: no
+    md_extensions: +raw_tex+multiline_tables
+  tufterhandout::html_tufte_handout:
+    highlight: kate
+    keep_md: no
+    md_extensions: +raw_tex+multiline_tables
+    theme: united
+    toc: yes
+    toc_depth: 2
+fontsize: 12pt
+linkcolor: blue
+---
+
+
+```{r, knitr_options, include=FALSE}
+    
+    # loading in required packages
+    if (!require("knitr")) install.packages("knitr"); library(knitr)
+    if (!require("rmarkdown")) install.packages("rmarkdown"); library(rmarkdown)
+    # some useful global defaults
+    opts_chunk$set(warning=FALSE, message=FALSE, include=TRUE, echo=TRUE, cache=TRUE, cache.comments=FALSE, comment='##')
+
+    # output specific defaults
+    output <- opts_knit$get("rmarkdown.pandoc.to")
+    if (output=="html") opts_chunk$set(fig.width=10, fig.height=5)
+    if (output=="latex") opts_chunk$set(fig.width=6,  fig.height=4, 
+        dev = 'png', dev.args=list(family="Arial"))
+```
+
+# Database
+
+The dataset for this project is composed by International Telecommunication Union (ITU) indicators by country, macroeconomic indicators by country, and Google broadband pricing data. Figure \ref{tel_db}  shows the structure of the database. It is composed by 8 tables that organize the data obtained from three different sources. 
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{db/db_diagram.png}
+  \caption{Telecom Database}
+  \label{tel_db}
+\end{figure}
+
+## Macroeconomic indicators by country
+
+One of the components of the dataset are Macroeconomic indicators by country from the World Bank open data website <http://data.worldbank.org>. This data is organize within two tables in the database. On one hand, the table `wb_indicators` contains the identification code and description of 1449 macroeconomic indicators available. On the othe hand, the table `wb_data` lump together data for 695 indicators from 211 contries, between the years 2000 and 2015.
+
+# Available Information
+
+All the scrips related to the project are available at the following repository: <https://github.com/veldanie/dwbi_project>. The folder [data](https://github.com/veldanie/dwbi_project/tree/master/data). On the other hand, the folder [db](https://github.com/veldanie/dwbi_project/tree/master/db) contains all the *dapa dump files* and the script `telecom.sql` that creates the database and the required tables. 
+
