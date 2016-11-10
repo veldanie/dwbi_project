@@ -1,4 +1,8 @@
-library(crayon)
+if (!require("crayon")) stop("Please install package \"crayon\" an reexecute the script.")
+if (!require("dplyr")) stop("Please install package \"dplyr\" an reexecute the script.")
+
+
+
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 1) {
   stop(red("\nIncorrect number of arguments.") %+% 
@@ -7,10 +11,10 @@ if (length(args) != 1) {
           "\n If the file is in the current directory, enter \"\" as pathToFiles")
 } else if(!is.na(args[1]) && !is.na(args[2])) {
   pathToFiles <- args[1]
+  if(grepl("[^/]$",pathToFiles)) paste0(pathToFiles,"/") ## ensure correct format path
   fixed_or_mobile <- args[2]
 } 
 
-library(dplyr)
 
 ## FIXED BROADBAND PRICES
 result <- data.frame(row.names = c("Country","Operator","Speed","Speed_units",
@@ -18,7 +22,7 @@ result <- data.frame(row.names = c("Country","Operator","Speed","Speed_units",
                      stringsAsFactors = FALSE)
 ##Load in data
   for(i in 2012:2015){
-    google_data <- read.csv(paste0(pathToFiles, "/Fixed_",i,".csv"),stringsAsFactors = FALSE, 
+    google_data <- read.csv(paste0(pathToFiles, "Fixed_",i,".csv"),stringsAsFactors = FALSE, 
                             header = TRUE)
     output <- data.frame("Country" = google_data$Country,
                         "Operator" = google_data$ISP,
@@ -39,8 +43,8 @@ result$Cap_units[is.na(result$Cap_units)] <- ""
 result <- filter(result,Cap_units != "Hours" & Cap_units != "hours")
 
 ##Adapt country names to ITU names, remove those territories not in ITU list
-ITU_names <- read.csv("googleCountryNames.csv")
-result$Country <- ITU_names$Names_ITU[match(result$Country,ITU_names$Names_Google)]
+ITU_names <- read.csv(paste0(pathToFiles,"googleCountryNames.csv"))
+result$Country <- ITU_names$Country_code[match(result$Country,ITU_names$Names_Google)]
 result <- filter(result, Country != "")
 
 ##Normalize cap to MB, clean NAs '?' and 0, assume no cap = unlimited, correct misspellings
@@ -68,7 +72,7 @@ result$Speed[grepl("*[Gg]bps*",result$Speed_units)] <-
 
 ##Price into local currency
 result$Currency <- trimws(result$Currency) ## remove whitespaces from curr code
-ex_rates <- read.csv("Unique_Currency.csv")
+ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"))
 result$Price <- gsub(",","", result$Price) ## delete "," sometimes inserted for thousands
 #ex rate conversion per year
 for(i in 1:4){
@@ -89,7 +93,7 @@ result <- data.frame(row.names = c("Country","Operator","Contract","Cap",
                      stringsAsFactors = FALSE)
 ##Load in data
 for(i in 2012:2015){
-  google_data <- read.csv(paste0(pathToFiles, "/Mobile_",i,".csv"),stringsAsFactors = FALSE, 
+  google_data <- read.csv(paste0(pathToFiles, "Mobile_",i,".csv"),stringsAsFactors = FALSE, 
                           header = TRUE)
   output <- data.frame("Country" = google_data$Country,
                        "Operator" = google_data$ISP,
@@ -118,12 +122,12 @@ result <- filter(result,Cap_units != "hours" & Cap_units != "hour" &
                    Cap_units != "day" & Cap_units != "days")
 
 ##Adapt country names to ITU names, remove those territories not in ITU list
-ITU_names <- read.csv("googleCountryNames.csv")
-result$Country <- ITU_names$Names_ITU[match(result$Country,ITU_names$Names_Google)]
+ITU_names <- read.csv(paste0(pathToFiles,"googleCountryNames.csv"))
+result$Country <- ITU_names$Country_code[match(result$Country,ITU_names$Names_Google)]
 result <- filter(result, Country != "")
 
 ##Price into local currency
-ex_rates <- read.csv("Unique_Currency.csv")
+ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"))
 result$Price_pre <- gsub(",","", result$Price_pre) ## delete "," used 1000s
 result$Price_post <- gsub(",","", result$Price_post) ## delete "," used 1000s
 # combine post and prepaid prices into a single column

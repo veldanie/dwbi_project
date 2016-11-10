@@ -11,6 +11,7 @@ use telecom;
 
 -- create the required tables
 -- Countries
+drop table if exists countries;
 create table countries (
 
 Country nchar(10) not null,
@@ -39,7 +40,7 @@ IndicatorYear int not null,
 IndicatorValue double,
 
 primary key (CountryCode, IndicatorCode, IndicatorYear),
-foreign key (IndicatorCode) references wb_indicators (IndicatorCode) on delete no action on update no action
+foreign key (IndicatorCode) references wb_indicators (IndicatorCode) on delete no action on update no action,
 foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 );
 
@@ -59,27 +60,28 @@ IndicatorYear int not null,
 IndicatorValue double,
 
 primary key (CountryCode, IndicatorCode, IndicatorYear),
-foreign key (IndicatorCode) references itu_indicators (IndicatorCode) on delete no action on update no action
+foreign key (IndicatorCode) references itu_indicators (IndicatorCode) on delete no action on update no action,
 foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 
 );
 
 drop table if exists fixedbb_prices;
 create table fixedbb_prices(
-Country nchar(15) not null,
+CountryCode int not null,
 `Year` int not null,
 Price numeric(10,3) not null,
 Speed numeric(10,3) not null,
 Cap nvarchar(15) not null,
 Operator nvarchar(70) not null,
 
-primary key (Country, `Year`, Operator, Price)  
+primary key (CountryCode, `Year`, Operator, Price),  
+foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 ); 
 
 
 drop table if exists mobilebb_prices;
 create table mobilebb_prices(
-Country nchar(15) not null,
+CountryCode int not null,
 `Year` int not null,
 Price numeric(10,3) not null,
 Cap nvarchar(15) not null,
@@ -87,6 +89,18 @@ Validity int not null,
 Contract nvarchar(15) not null,  
 Operator nvarchar(70) not null,
 
-primary key (Country, `Year`, Operator, Price)  
+primary key (CountryCode, `Year`, Operator, Price),  
+foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
+
+);
+
+drop table if exists LCCs;
+create table LCCs(
+CountryCode int not null,
+`Year` int not null,
+LCC nvarchar(5),
+
+primary key (CountryCode, `Year`),
+foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 );
 -- end of file
