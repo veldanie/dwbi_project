@@ -1,6 +1,5 @@
-if (!require("crayon")) stop("Please install package \"crayon\" an reexecute the script.")
-if (!require("dplyr")) stop("Please install package \"dplyr\" an reexecute the script.")
-
+library(crayon)
+library(dplyr)
 
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -11,7 +10,7 @@ if (length(args) != 1) {
           "\n If the file is in the current directory, enter \"\" as pathToFiles")
 } else if(!is.na(args[1]) && !is.na(args[2])) {
   pathToFiles <- args[1]
-  if(grepl("[^/]$",pathToFiles)) paste0(pathToFiles,"/") ## ensure correct format path
+  if(grepl("[^/]$",pathToFiles)) pathToFiles <- paste0(pathToFiles,"/") ## ensure correct format path
   fixed_or_mobile <- args[2]
 } 
 
@@ -72,14 +71,16 @@ result$Speed[grepl("*[Gg]bps*",result$Speed_units)] <-
 
 ##Price into local currency
 result$Currency <- trimws(result$Currency) ## remove whitespaces from curr code
-ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"))
+ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"), stringsAsFactors = FALSE)
 result$Price <- gsub(",","", result$Price) ## delete "," sometimes inserted for thousands
+
 #ex rate conversion per year
 for(i in 1:4){
   year <- 2011+i
-  result$Price[result$Year == year] <- as.numeric(result$Price[result$Year == year]) /
-    as.numeric(ex_rates[,i+1][match(result$Currency[result$Year == year],ex_rates$X)])
-}
+  priceLC <- as.numeric(result$Price[result$Year == year])
+  exRate <- as.numeric(ex_rates[,i+2][match(result$Currency[result$Year == year],ex_rates$X)])
+  result$Price[result$Year == year] <- priceLC / exRate
+  }
 result <- filter(result,!is.na(Price)) ## delete prices for unknown currencies
 
 # select fields to export into .csv & write
@@ -127,7 +128,7 @@ result$Country <- ITU_names$Country_code[match(result$Country,ITU_names$Names_Go
 result <- filter(result, Country != "")
 
 ##Price into local currency
-ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"))
+ex_rates <- read.csv(paste0(pathToFiles,"Unique_Currency.csv"), stringsAsFactors = FALSE)
 result$Price_pre <- gsub(",","", result$Price_pre) ## delete "," used 1000s
 result$Price_post <- gsub(",","", result$Price_post) ## delete "," used 1000s
 # combine post and prepaid prices into a single column
@@ -141,8 +142,9 @@ result <- result[!is.na(match(result$Currency,ex_rates$X)),] ## clean unknown cu
 
 for(i in 1:4){
   year <- 2011+i
-  result$Price[result$Year == year] <- as.numeric(result$Price[result$Year == year]) /
-    as.numeric(ex_rates[,i+1][match(result$Currency[result$Year == year],ex_rates$X)])
+  priceLC <- as.numeric(result$Price[result$Year == year])
+  exRate <- as.numeric(ex_rates[,i+2][match(result$Currency[result$Year == year],ex_rates$X)])
+  result$Price[result$Year == year] <- priceLC / exRate
 }
 
 

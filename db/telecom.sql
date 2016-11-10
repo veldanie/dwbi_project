@@ -74,7 +74,7 @@ Speed numeric(10,3) not null,
 Cap nvarchar(15) not null,
 Operator nvarchar(70) not null,
 
-primary key (CountryCode, `Year`, Operator, Price),  
+primary key (CountryCode, `Year`, Operator, Speed, Cap, Price),  
 foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 ); 
 
@@ -85,11 +85,11 @@ CountryCode int not null,
 `Year` int not null,
 Price numeric(10,3) not null,
 Cap nvarchar(15) not null,
-Validity int not null,
+Validity nvarchar(15) not null,
 Contract nvarchar(15) not null,  
 Operator nvarchar(70) not null,
 
-primary key (CountryCode, `Year`, Operator, Price),  
+primary key (CountryCode, `Year`, Operator, Cap, Contract, Validity, Price),  
 foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
 
 );
@@ -98,7 +98,7 @@ drop table if exists LCCs;
 create table LCCs(
 CountryCode int not null,
 `Year` int not null,
-LCC nvarchar(5),
+LCC boolean,
 
 primary key (CountryCode, `Year`),
 foreign key (CountryCode) references countries (CountryCode) on delete no action on update no action
