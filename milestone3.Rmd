@@ -56,12 +56,13 @@ ITU and WB data contain one observation per country, year and indicator. Google 
 
 Before being transferred into the database, data have been processed according to the schema in Figure \ref{data_proc}. Data processing included cleaning incomplete or erroneous records, normalizing the data (e.g. from local currency to USD, speeds and caps into common units) and formatting (e.g. coding of blank records, treatment of mixed variables including numeric and text values).  
 
-\begin{figure}
+
+\begin{figure}[!h]
+  \centering
   \includegraphics[width=0.5\linewidth]{Flow_chart.png}
   \caption{Data processing diagram}
   \label{data_proc}
 \end{figure}
-
 
 # Database description
 
