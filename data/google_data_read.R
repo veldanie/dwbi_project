@@ -1,3 +1,6 @@
+if (!require("crayon")) install.packages("crayon", repos='https://cran.rstudio.com')
+if (!require("dplyr")) install.packages("dplyr", repos='https://cran.rstudio.com')
+
 library(crayon)
 library(dplyr)
 
