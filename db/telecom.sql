@@ -14,7 +14,7 @@ use telecom;
 drop table if exists countries;
 create table countries (
 
-Country nchar(10) not null,
+Country nchar(50) not null,
 CountryCode int not null,
 
 primary key (CountryCode)
@@ -26,7 +26,7 @@ primary key (CountryCode)
 drop table if exists wb_indicators;
 create table wb_indicators (
 
-IndicatorCode nchar(20) not null,
+IndicatorCode nvarchar(20) not null,
 Description varchar(4000),
 
 primary key (IndicatorCode)
@@ -35,7 +35,7 @@ primary key (IndicatorCode)
 drop table if exists wb_data;
 create table wb_data (
 CountryCode int not null,
-IndicatorCode nvarchar(13) not null,
+IndicatorCode nvarchar(20) not null,
 IndicatorYear int not null,
 IndicatorValue double,
 
@@ -47,7 +47,7 @@ foreign key (CountryCode) references countries (CountryCode) on delete no action
 -- Itu Indicators
 create table itu_indicators (
 
-IndicatorCode nchar(20) not null,
+IndicatorCode nvarchar(13) not null,
 Description varchar(4000),
 
 primary key (IndicatorCode)
