@@ -61,3 +61,20 @@ FROM
 	FROM mobilebb_prices) b
 WHERE PriceConverted < 500 
 GROUP BY CountryCode, IndicatorYear;
+
+
+###############################################################
+## Creates a table with the data from the LCC table
+## plus a column indicating whether a given value is estimated 
+## (TRUE) or not estimated (FALSE). This table will be filled
+## in by the classification algorithm.
+###############################################################
+
+DROP TABLE IF EXISTS LCCs_completed;
+CREATE TABLE LCCs_completed AS
+SELECT 	*,
+		CASE
+			WHEN LCC IS NULL THEN true
+            ELSE false
+		END estimate
+FROM LCCs;
