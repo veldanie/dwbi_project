@@ -143,7 +143,8 @@ output_table = data.frame("Indicators"= ordered_indics[,1],
                           "Countries excl."= ordered_indics[,3])
 #Output table
 g1 <- tableGrob(output_table[1:5,], 
-           theme=ttheme_default(base_size = 8, equal.width=TRUE),
+           theme=ttheme_default(base_size = 8, 
+           core=list(bg_params = list(fill="darkolivegreen1"))),
            cols = c("Indicators inc.","Data available \n(out of 44 countries)",
                     "Countries excl."))
 title <- textGrob("Choice of indicators for the classification algorithm",gp=gpar(fontsize=14))
@@ -153,13 +154,14 @@ g1_title <- gtable_add_grob(g1_title, title, 1, 1, 1, ncol(g1_title))
 
 #g1$widths <- unit(c(0.25,0.2,0.4), "npc")
 g2 <- tableGrob(output_table[6:9,], 
-               theme=ttheme_default(base_size = 8, equal.width=TRUE),
+               theme=ttheme_default(base_size = 8, equal.width=TRUE,
+               core=list(bg_params = list(fill="darkolivegreen1"))), 
                cols = c("Indicators inc.","Data available \n(out of 44 countries)",
                         "Countries excl."))
 #g2$widths <- unit(c(0.25,0.2,0.4), "npc")
 g3 <- tableGrob(output_table[10:13,], 
                 theme=ttheme_default(base_size = 8, equal.width=TRUE,
-                core=list(bg_params = list(fill=c("grey90", "grey95", "darkolivegreen1", "grey90"))), 
+                core=list(bg_params = list(fill=c("darkolivegreen1", "darkolivegreen1", "darkolivegreen1", "grey90"))), 
                 cols = c("Indicators inc.","Data available \n(out of 44 countries)",
                          "Countries excl.")))
 #g3$widths <- unit(c(0.25,0.2,0.4), "npc")
