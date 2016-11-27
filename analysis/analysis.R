@@ -163,11 +163,9 @@ save(table_coeff, file='analysis/table_coef.Rda')
 
 ## Plot key variables vs. Internet Users
 par(mfrow = c(3,2))
-x <- itu_data[itu_data$IndicatorYear == year_predict,c('IndicatorValue')]
-x <- itu_data_std[,c('IndicatorValue')]
+x <- itu_data[itu_data$IndicatorYear==year_predict,c('IndicatorValue')]
 for (var in as.character(table_coeff$Variable)){
-  #y <- wb_data[wb_data$IndicatorYear == year_predict,c(var)]
-  y <- wb_data[,c(var)]
+  y <- wb_data[itu_data$IndicatorYear==year_predict,c(var)]
   plot(x,y, main = var, xlab = var, ylab = 'Internet Users', pch = 16, col = 'red')
 }
 par(mfrow = c(1,1))
