@@ -1,6 +1,6 @@
 
 ##1. Packages:
-library(RMySQL);library(tidyr);library(dplyr);library(ggplot2);library(lars); library(mombf)
+library(RMySQL);library(tidyr);library(dplyr);library(ggplot2);library(gridExtra);library(lars); library(mombf)
 
 ## 2. AUXILIARY FUNCTIONS
 ### Data standarization. We use mean and sd from each year.
@@ -22,11 +22,11 @@ data_standardized <- function(data){
   return(list(data_std=data_std, data_mean=data.frame(IndicatorYear=years, data_mean_matrix), data_sd=data.frame(IndicatorYear=years, data_sd_matrix)))
 }
 
-
-lasso_reg <- function (x, y, mean_y, sd_y, year_predict = NULL){
+lasso_reg <- function (x, y, mean_y, sd_y, year_predict = NULL, tol=0){
   #x and y are assumed to show countryCode and year in the first two columns.
   if(is.null(year_predict)) year_predict <- max(y$IndicatorYear) 
-  model <- lars(x = as.matrix(x[,-c(1,2)]), y = y[,-c(1,2)], type = c('lasso'))
+  model <- lars(x = as.matrix(x[,-c(1,2)]), y = y[,-c(1,2)], type = c('lasso'), normalize = FALSE)
+  model_coef <- tail(coef(model),1)
   x_predict <- filter(x, IndicatorYear==year_predict)
   lasso_predict <- predict.lars(model, x_predict[,-c(1,2)], type =c('fit'), mode = 'norm')$fit
   diml <- dim(lasso_predict)
@@ -35,8 +35,10 @@ lasso_reg <- function (x, y, mean_y, sd_y, year_predict = NULL){
   mean_pred <- as.numeric(filter(mean_y, IndicatorYear == year_predict)[-1])
   sd_pred <- as.numeric(filter(sd_y, IndicatorYear == year_predict)[-1])
   
+  ind_var_sel <- abs(model_coef)>tol
   y_predict <- mutate(y_predict, IndicatorValueUnits = IndicatorValue*sd_pred+mean_pred,  IndicatorPredUnits = IndicatorPred*sd_pred+mean_pred)
-  return(list(y_predict = y_predict))  
+  var_selected = data.frame(Variable = colnames(model_coef)[ind_var_sel],Coefficient =model_coef[ind_var_sel])
+  return(list(y_predict = y_predict, var_selected = var_selected))  
 }
 
 bayesian_reg <- function (x, y, mean_y, sd_y, maxvars = 6, year_predict = NULL){
@@ -52,12 +54,13 @@ bayesian_reg <- function (x, y, mean_y, sd_y, maxvars = 6, year_predict = NULL){
   mean_pred <- as.numeric(filter(mean_y, IndicatorYear == year_predict)[-1])
   sd_pred <- as.numeric(filter(sd_y, IndicatorYear == year_predict)[-1])
   y_predict <- mutate(y_predict, IndicatorValueUnits = IndicatorValue*sd_pred+mean_pred,  IndicatorPredUnits = IndicatorPred*sd_pred+mean_pred)
-  return(list(y_predict = y_predict, var_selected = data.frame(Variable = var_selected, Coef = model$coef[model$postMode==1])))  
+  var_selected = data.frame(Variable = var_selected, Coefficient = model$coef[model$postMode==1])
+  return(list(y_predict = y_predict, var_selected = var_selected, year_predict=year_predict))  
 }
 
 ## 3. DB CONNECTION
 db <- dbConnect(MySQL(), user='root', password='root' , dbname='telecom', host='localhost')
-dbDisconnect(db)
+#dbDisconnect(db)
 
 ########################################################################################################################
 ## 4. VARIABLE SELECTION
@@ -73,23 +76,27 @@ ind_wb_db <- fetch(ind_wb_query, n=-1)
 # DB World Bank
 data_wb_query <- dbSendQuery(db, paste0("select * from wb_data where IndicatorCode in ","(",paste0("'",initial_wb_var,"'", collapse = ","),");"))
 wb_db <- fetch(data_wb_query, n=-1)
+
 wb_data_matrix <- spread(wb_db, IndicatorCode, IndicatorValue)[,-c(1,2)]
 corr_matrix <-cor(wb_data_matrix, use  = "pairwise.complete.obs")
-wb_cluster <- hclust(dist(abs(cor(na.omit(corr_matrix)))))
+#wb_cluster <- hclust(dist(abs(cor(na.omit(corr_matrix)))))
+wb_cluster <- hclust(dist(abs(corr_matrix)))
+
 wb_var_order <- names(wb_data_matrix)[wb_cluster$order]
 plot(wb_cluster)
 
 wb_ordered_indicators <-ind_wb_db[match(wb_var_order,ind_wb_db$IndicatorCode),]
-wb_selected_indicators <- wb_ordered_indicators[c(2,4,5,6,7,8,10,12,13,15,17,18,21,24,25,26,27,28,30),]
+##wb_selected_indicators <- wb_ordered_indicators[c(2,4,5,6,7,8,10,12,13,15,17,18,21,24,25,26,27,28,30),]
+wb_selected_indicators <- wb_ordered_indicators[c(2,4,7,8,9,11,14,15,16,18,19,20,24,25,27,28,29),]
+
 selected_wb_var <- wb_selected_indicators$IndicatorCode
 
 # Table 1. Variables selected: 
-print(wb_selected_indicators)  
+#print(wb_selected_indicators)  
 ########################################################################################################################
 # 5. Import data and create matrices.
 # DB World Bank
-data_wb_query <- dbSendQuery(db, paste0("select * from wb_data where IndicatorCode in ","(",paste0("'",selected_wb_var,"'", collapse = ","),");"))
-wb_db <- fetch(data_wb_query, n=-1)
+wb_db <- filter(wb_db, IndicatorCode %in% selected_wb_var)
 
 # DB ITU
 data_itu_query <- dbSendQuery(db, "select * from itu_data;")
@@ -125,16 +132,42 @@ itu_data_std <- itu_data_std_list$data_std
 
 lasso_result <- lasso_reg(wb_data_std, itu_data_std, itu_data_std_list$data_mean, itu_data_std_list$data_sd, year_predict = NULL)
 
+table_coeff <- lasso_result$var_selected
+mutate(table_coeff, Description = wb_selected_indicators$Description[match(Variable, wb_selected_indicators$IndicatorCode)])
+
 ggplot(lasso_result$y_predict, aes(x=IndicatorPredUnits, y=IndicatorValueUnits))+geom_point()+
   geom_abline(slope=1, intercept=0, col='red')#+geom_label(aes(label=CountryCode))
 
 
 ### 5.2. Bayesian Variable Selection:
 
-bayes_result <- bayesian_reg(wb_data_std, itu_data_std, itu_data_std_list$data_mean, itu_data_std_list$data_sd, year_predict = NULL)
+bayes_result <- bayesian_reg(wb_data_std, itu_data_std, itu_data_std_list$data_mean, itu_data_std_list$data_sd, maxvars = 6, year_predict = NULL)
+
+year_predict <- bayes_result$year_predict
+table_y_predict <-bayes_result$y_predict
+table_y_predict <- mutate(table_y_predict, Deviation = abs(IndicatorValueUnits-IndicatorPredUnits)>20,
+                          Country=countries$Country[match(CountryCode,countries$CountryCode)])
+
+## Plot identifying outliers countries
+
+ggplot(table_y_predict, aes(x=IndicatorPredUnits, y=IndicatorValueUnits, label=Country))+geom_point(aes(color=Deviation))+
+geom_abline(slope=1, intercept=0, linetype=2, col='blue')+ggtitle(paste('Internet Users per Country',year_predict))+
+scale_x_continuous('Predicted Internet Users') + scale_y_continuous('Internet Users') +
+  geom_text(aes(label=ifelse(Deviation,as.character(Country),'')),hjust=1.05,vjust=0)+
+theme(panel.background = element_blank(),axis.line.x = element_line(colour = "black"),
+      axis.line.y = element_line(colour = "black"),legend.position="none",plot.title = element_text(lineheight=.8, face="bold"))
 
 table_coeff <- bayes_result$var_selected
-mutate(table_coeff, Description = wb_selected_indicators$Description[match(Variable, wb_selected_indicators$IndicatorCode)])
+table_coeff <- mutate(table_coeff, Description = wb_selected_indicators$Description[match(Variable, wb_selected_indicators$IndicatorCode)])
+save(table_coeff, file='analysis/table_coef.Rda')
 
-ggplot(bayes_result$y_predict, aes(x=IndicatorPredUnits, y=IndicatorValueUnits))+geom_point()+
-  geom_abline(slope=1, intercept=0, col='red')#+geom_label(aes(label=CountryCode))
+## Plot key variables vs. Internet Users
+par(mfrow = c(3,2))
+x <- itu_data[itu_data$IndicatorYear == year_predict,c('IndicatorValue')]
+x <- itu_data_std[,c('IndicatorValue')]
+for (var in as.character(table_coeff$Variable)){
+  #y <- wb_data[wb_data$IndicatorYear == year_predict,c(var)]
+  y <- wb_data[,c(var)]
+  plot(x,y, main = var, xlab = var, ylab = 'Internet Users', pch = 16, col = 'red')
+}
+par(mfrow = c(1,1))
