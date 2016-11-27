@@ -159,7 +159,12 @@ theme(panel.background = element_blank(),axis.line.x = element_line(colour = "bl
 
 table_coeff <- bayes_result$var_selected
 table_coeff <- mutate(table_coeff, Description = wb_selected_indicators$Description[match(Variable, wb_selected_indicators$IndicatorCode)])
-save(table_coeff, file='analysis/table_coef.Rda')
+#save(table_coeff, file='analysis/table_coeff.RData')
+
+#Exporting SQL table of Coefficients
+dbSendQuery(db,"drop table if exists regression_coeff")
+dbWriteTable(conn = db,name="regression_coeff", value=table_coeff, row.names=FALSE)
+
 
 ## Plot key variables vs. Internet Users
 par(mfrow = c(3,2))
