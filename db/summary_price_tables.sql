@@ -78,3 +78,6 @@ SELECT 	*,
             ELSE false
 		END estimate
 FROM LCCs;
+
+ALTER TABLE LCCs_completed
+ADD PRIMARY KEY (CountryCode, `Year`);
