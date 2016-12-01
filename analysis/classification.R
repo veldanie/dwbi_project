@@ -6,6 +6,8 @@ if (!require("grid")) install.packages("grid", repos='https://cran.rstudio.com')
 if (!require("gtable")) install.packages("gtable", repos='https://cran.rstudio.com')
 if (!require("tidyr")) install.packages("tidyr", repos='https://cran.rstudio.com')
 if (!require("ggplot2")) install.packages("ggplot2", repos='https://cran.rstudio.com')
+if (!require("knitr")) install.packages("knitr", repos='https://cran.rstudio.com')
+library(knitr);
 library(ggplot2)
 library(tidyr)
 library(grid)
@@ -184,7 +186,7 @@ g5 <- tableGrob(output_table[17:20,],
                 cols = c("Indicators inc.","Data available \n(out of 44 countries)",
                          "Countries excl."))
 
-pdf("Choice_variables.pdf", title = "Choice of indicators for the classification algorithm")
+pdf("Choice_variables_test.pdf", title = "Choice of indicators for the classification algorithm")
 grid.arrange(g1_title)
 grid.arrange(g2, newpage = TRUE)
 grid.arrange(g3, newpage = TRUE)
@@ -225,6 +227,26 @@ predicting_std <- function(data,year,year_range){
   data <- data * t(t(matrix(1L,nrow=n_year,ncol=n_vars)) * q[i,]) 
   
   return(data)
+}
+## function for the roc-curves, taken from our visiting professor Kosmidis
+roc <- function(fit, truth, thresholds,
+                plot = FALSE, add = FALSE, col = "black") {
+  truepos <- sapply(thresholds, function(pthres) {
+    sum((fit > pthres) & (truth == 1))/sum(truth == 1)})
+  falsepos <- sapply(thresholds, function(pthres) {
+    sum((fit > pthres) & (truth == 0))/sum(truth == 0)})
+  correctclass <- sapply(thresholds, function(pthres) {
+    (sum((fit > pthres) & (truth == 0)) +
+       sum((fit > pthres) & (truth == 1)))/length(fit)})
+  if (plot) {
+    if (add) points(falsepos, truepos, type = "l", col = col)
+    else {
+      plot(falsepos, truepos, type = "l", col = col)
+      abline(0, 1) }
+  }
+  invisible(data.frame(thresholds, truepos = truepos,
+                       falsepos = falsepos,
+                       correctclass = correctclass))
 }
 
 # 2.1 format prediction Xs
@@ -277,21 +299,22 @@ x_training <- training_std(x_training)
 x_training <- x_training[,-1:-2]
 x_predicted <- predicting_std(x_predicted,"2014",year_range)
 
-# GLM regression
+# 2.3 GLM regression: training and fit
 formula_training <- formula(paste("LCC ~",
                          paste0(names(x_training)[-1], collapse = " + ")))
 glm_fit <- glm(formula_training,data=x_training,family = binomial)
 glm_predict <- predict(glm_fit, x_predicted, type = "response")
 
-# write results classification into the database
+
+# 2.4 write results classification into the database
 line <-paste0("(",countries_predicted,",2014,",as.logical(round(glm_predict)), ",TRUE),", collapse = " ")
 line <- gsub(".$", " ",line)
 resultquey <- dbSendQuery(db, 
-            paste0("INSERT INTO LCCs_completed (CountryCode, `Year`, LCC, estimate) VALUES ",
-                   line, "ON DUPLICATE KEY UPDATE LCC=VALUES(LCC), estimate=VALUES(estimate);"))
+                          paste0("INSERT INTO LCCs_completed (CountryCode, `Year`, LCC, estimate) VALUES ",
+                                 line, "ON DUPLICATE KEY UPDATE LCC=VALUES(LCC), estimate=VALUES(estimate);"))
 dbDisconnect(db)
 
-#Output summary tables and charts
+# 2.5 Some output summary tables and charts
 plot1 <- ggplot(output_table,aes(x=1:length(output_table$Data_available), y=as.integer(Data_available)))+
   geom_bar(stat="Identity", fill=c(rep("darkgreen",12),rep("grey",23)))+
   labs(x="# Indicators included",y="Countries to be classified with data available")
@@ -309,15 +332,46 @@ c3 <- paste0(strsplit(ordered_indics[,3][12],",")[[1]],collapse = "\n")
 output_table2 = data.frame("c1"= c1, "c2"=c2, "c3"=c3, stringsAsFactors = FALSE)
 
 gt <- tableGrob(output_table2, 
-          theme=ttheme_default(base_size = 8, 
-                               core=list(bg_params = list(fill="darkolivegreen1"))),
-          cols = c("Indicators inc.","Countries included",
-                   "Countries excluded (lack of data)"), rows=NULL)
+                theme=ttheme_default(base_size = 8, 
+                                     core=list(bg_params = list(fill="darkolivegreen1"))),
+                cols = c("Indicators inc.","Countries included",
+                         "Countries excluded (lack of data)"), rows=NULL)
 
 pdf("Choice_variables_summary.pdf", title = "Choice of indicators for the classification algorithm")
 grid.arrange(gt)
 grid.arrange(plot1, newpage=TRUE)
 dev.off()
+
+mean_values <- as.vector(rowSums(x_training[,-1]*t(t(matrix(1L,nrow=dim(x_training)[1],ncol=12)) * 
+                                      glm_fit$coefficients[-1]) + glm_fit$coefficients[1]))
+
+
+plot_values <- data.frame("avg"=mean_values, "fitted"=glm_fit$fitted.values, 
+                          "true"=x_training[,1])
+pdf("Classification_fit.pdf")
+ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
+  labs(title="Classification: training dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")
+dev.off()
+pdf("Classification_fit_zoom.pdf")
+ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
+  labs(title="Classification: training dataset (zoom)", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
+  stat_smooth(method = "glm",method.args = list(family = "binomial"),se=FALSE,size=0.5,
+              col ="red", fullrange = TRUE)
+dev.off()
+
+tmp <- anova(glm_fit, test = "LRT")
+row.names(tmp)[-1] <- indics_names$Description[match(row.names(tmp)[-1],indics_names$IndicatorCode)]
+
+#Roc curve
+roc_curve <- roc(plot_values$fitted, plot_values$true,
+            seq(0, 1, length = 100), col = "blue")
+
+pdf("ROC_curve.pdf")
+ggplot(roc_curve,aes(x = falsepos, y = truepos)) + geom_line(col="blue")+
+  geom_abline(aes(intercept = 0, slope = 1),col="red") +labs(title="ROC curve classification", x = "False positive", y = "True positive") +
+  theme_bw()+xlim(0,1)+ylim(0,1)
+dev.off()
+
 
 
 
