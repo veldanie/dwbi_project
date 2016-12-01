@@ -303,7 +303,7 @@ x_predicted <- predicting_std(x_predicted,"2014",year_range)
 formula_training <- formula(paste("LCC ~",
                          paste0(names(x_training)[-1], collapse = " + ")))
 glm_fit <- glm(formula_training,data=x_training,family = binomial)
-glm_predict <- predict(glm_fit, x_predicted, type = "response")
+glm_predict <- predict(glm_fit, x_predicted, type = "response", se.fit = TRUE)
 
 
 # 2.4 write results classification into the database
@@ -372,7 +372,43 @@ ggplot(roc_curve,aes(x = falsepos, y = truepos)) + geom_line(col="blue")+
   theme_bw()+xlim(0,1)+ylim(0,1)
 dev.off()
 
+# How sure we are of our prediction
 
+avg_predicted <- as.vector(rowSums(x_predicted[,]*t(t(matrix(1L,nrow=dim(x_predicted)[1],ncol=12)) * 
+                                                   glm_fit$coefficients[-1]) + glm_fit$coefficients[1]))
+upper_predicted <- glm_predict$fit+1.96*glm_predict$se.fit 
+lower_predicted <- glm_predict$fit-1.96*glm_predict$se.fit
+plot_values2 <- data.frame("avg"=avg_predicted, "fitted"=glm_predict$fit,
+                           "upper"=upper_predicted,"lower"=lower_predicted)
+rownames(plot_values2) <- country_names$Country[match(countries_predicted,country_names$CountryCode)]
+rownames(plot_values2)[14] <- "S.Tome"
+rownames(plot_values2)[19] <- "Timor"
+rownames(plot_values2)[17] <- "  Swaziland"
+rownames(plot_values2)[18] <- "  Tajikistan"
+rownames(plot_values2)[6] <- "   Haiti"
+rownames(plot_values2)[9] <- "New Cal"
+pdf("Classification_prediction.pdf")
+ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
+  labs(title="Classification: prediction dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
+  geom_point(data=plot_values2, aes(x=plot_values2$avg,y=plot_values2$fitted),col="red")+
+  xlim(120,190)+
+  geom_text(data=plot_values2,aes(label=rownames(plot_values2)),
+            nudge_y=-0.1, size=3,hjust="left",vjust="bottom",check_overlap = TRUE)
+dev.off()
 
+pdf("Classification_zoom.pdf")
+ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
+  labs(title="Classification: prediction dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
+  geom_point(data=plot_values2, aes(x=plot_values2$avg,y=plot_values2$fitted),col="red")+
+  geom_errorbar(data=plot_values2, aes(x=plot_values2$avg,ymax=plot_values2$upper,ymin=plot_values2$lower),col="darkgreen", width=0.2)+
+  xlim(170,180)+
+  geom_text(data=plot_values2,aes(label=rownames(plot_values2)),
+            nudge_y=-0.1, size=3,hjust="left",vjust="bottom")+
+  geom_hline(yintercept = 0.5,col="darkred",linetype="dashed", size=0.5)
+dev.off()
 
-
+ggplot(plot_values2, aes(avg,fitted))+ geom_point()
+ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
+  labs(title="Classification: training dataset (zoom)", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
+  stat_smooth(method = "glm",method.args = list(family = "binomial"),se=FALSE,size=0.5,
+              col ="lightblue", fullrange = TRUE)
