@@ -353,14 +353,13 @@ plot_values <- data.frame("avg"=mean_values, "fitted"=glm_fit$fitted.values,
 pdf("Classification_fit.pdf")
 ggplot(plot_values,aes(avg,fitted, color=color_values))+geom_jitter(height = 0.1, size=0.5)+
   labs(title="Classification: training dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
-  scale_color_manual(breaks = c("LCC","Non LCC"),
-                     values=c("black", "blue")
+  scale_color_manual(breaks = c("LCC","Non LCC"),values=c("black", "green"))
 dev.off()
 pdf("Classification_fit_zoom.pdf")
-ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
+ggplot(plot_values,aes(avg,fitted, color=color_values))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
   labs(title="Classification: training dataset (zoom)", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
   stat_smooth(method = "glm",method.args = list(family = "binomial"),se=FALSE,size=0.5,
-              col ="red", fullrange = TRUE)
+              col ="red", fullrange = TRUE)+scale_color_manual(breaks = c("LCC","Non LCC"),values=c("black", "green"))
 dev.off()
 
 tmp <- anova(glm_fit, test = "LRT")
