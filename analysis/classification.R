@@ -345,12 +345,16 @@ dev.off()
 mean_values <- as.vector(rowSums(x_training[,-1]*t(t(matrix(1L,nrow=dim(x_training)[1],ncol=12)) * 
                                       glm_fit$coefficients[-1]) + glm_fit$coefficients[1]))
 
+color_values =as.vector(matrix("black", ncol=1,nrow = dim(x_training)[1]))
+color_values[x_training[1]==1] <- "blue"
 
 plot_values <- data.frame("avg"=mean_values, "fitted"=glm_fit$fitted.values, 
-                          "true"=x_training[,1])
+                          "true"=x_training[,1], "color"=color_values)
 pdf("Classification_fit.pdf")
-ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
-  labs(title="Classification: training dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")
+ggplot(plot_values,aes(avg,fitted, color=color_values))+geom_jitter(height = 0.1, size=0.5)+
+  labs(title="Classification: training dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
+  scale_color_manual(breaks = c("LCC","Non LCC"),
+                     values=c("black", "blue")
 dev.off()
 pdf("Classification_fit_zoom.pdf")
 ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
@@ -388,6 +392,7 @@ rownames(plot_values2)[18] <- "  Tajikistan"
 rownames(plot_values2)[6] <- "   Haiti"
 rownames(plot_values2)[9] <- "New Cal"
 pdf("Classification_prediction.pdf")
+
 ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
   labs(title="Classification: prediction dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
   geom_point(data=plot_values2, aes(x=plot_values2$avg,y=plot_values2$fitted),col="red")+
@@ -396,7 +401,7 @@ ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
             nudge_y=-0.1, size=3,hjust="left",vjust="bottom",check_overlap = TRUE)
 dev.off()
 
-pdf("Classification_zoom.pdf")
+pdf("Classification_prediction_zoom.pdf")
 ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
   labs(title="Classification: prediction dataset", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
   geom_point(data=plot_values2, aes(x=plot_values2$avg,y=plot_values2$fitted),col="red")+
@@ -406,9 +411,3 @@ ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+
             nudge_y=-0.1, size=3,hjust="left",vjust="bottom")+
   geom_hline(yintercept = 0.5,col="darkred",linetype="dashed", size=0.5)
 dev.off()
-
-ggplot(plot_values2, aes(avg,fitted))+ geom_point()
-ggplot(plot_values,aes(avg,fitted))+geom_jitter(height = 0.1, size=0.5)+xlim(165,185)+
-  labs(title="Classification: training dataset (zoom)", x=expression("W " ~ phi * "(x)"), y="Fitted values")+
-  stat_smooth(method = "glm",method.args = list(family = "binomial"),se=FALSE,size=0.5,
-              col ="lightblue", fullrange = TRUE)
