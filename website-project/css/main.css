@@ -60,6 +60,8 @@ body { font: 'Open Sans', sans-serif; }
 h1 { margin-top: 0; }
 p { font-size: 16px; margin: 20px 0; }
 
+
+li { font-size: 16px}
 .navbar { border-radius: 0; }
 
 #wrapper {

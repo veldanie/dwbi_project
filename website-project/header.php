@@ -39,8 +39,8 @@
 				<div class="collapse navbar-collapse text-center" id="myNavbar">
 				  <ul class="nav navbar-nav center-block text-center">
 				  	<li <?php if ($page_title == "Home")   echo 'class="active"';?>><a href="/">Home</a></li>
-					<li <?php if ($page_title == "Page 1") echo 'class="active"';?>><a href="/first_page.php">Macroeconomic Factors</a></li>
-					<li <?php if ($page_title == "Page 2") echo 'class="active"';?>><a href="/second_page.php">Influential Variables</a></li> 
+					<li <?php if ($page_title == "Page 1") echo 'class="active"';?>><a href="/first_page.php">Variable Selection Process</a></li>
+					<li <?php if ($page_title == "Page 2") echo 'class="active"';?>><a href="/second_page.php">Influential Macroeconomic Indicators</a></li> 
 					<li <?php if ($page_title == "Page 3") echo 'class="active"';?>><a href="/third_page.php">LCC</a></li> 
 				  </ul>
 				</div>

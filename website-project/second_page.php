@@ -1,23 +1,25 @@
 <?php $page_title = "Page 2"; include('header.php'); ?>
 
-<h1><center>Socio-Economic factors affecting the Digital Divide</center></h1>
+<h1><center>Influential Macro Economic Indicators</center></h1>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi consectetur lectus quis leo viverra iaculis. Donec at turpis orci. Cras odio ante, venenatis sed condimentum a, lobortis a nibh. Fusce aliquam metus vel ipsum ultricies dictum. Mauris ac tellus tincidunt eros pharetra dictum a vel nisi. Quisque quis est feugiat ex hendrerit facilisis a vel felis. Praesent eleifend lacinia rhoncus. Nunc ac dui diam. Duis sodales volutpat maximus. Vivamus laoreet bibendum consequat. Sed tempus lacus vitae magna ultrices aliquam.</p>
+<p> In order to indetify key macroeconomic indicators, percentage of internet users is modeled as a linear function of macroeconomic indicators. We implement a bayesian variable selection pocedure that allow us to indentify the most influential macro indicators. The following table exhibits the variables selected and the conrresponding regression coefficients. 
+</p>
+<br>
 
 <?php
-include('connect_db.php');
+ include('connect_db.php');
 
-$result = mysqli_query($conn, "SELECT * FROM LCCs");
+$result = mysqli_query($conn, "SELECT * FROM regression_coeff");
 
-echo "<table id='myTable' class='dataTable display cell-border'>";
-echo "<thead><tr><th>CountryCode</th><th>Year</th><th>LCChaita</th></tr></thead>";
+echo "<table id='regression_coeff' class='dataTable display cell-border'>";
+echo "<thead><tr><th>Variable</th><th>Coefficient</th><th>Description</th></tr></thead>";
 echo "<tbody>";
 while($row = mysqli_fetch_array($result)) {
-    $CountryCode = $row['CountryCode'];
-    $Year = $row['Year'];
-    $LCC = $row['LCC'];
+    $Variable = $row['Variable'];
+    $Coefficient = $row['Coefficient'];
+    $Description = $row['Description'];
     
-    echo "<tr><td>".$CountryCode."</td><td>".$Year."</td><td>".$LCC."</td><tr>";
+    echo "<tr><td>".$Variable."</td><td>".$Coefficient."</td><td>".$Description."</td><tr>";
 }
 echo "</tbody>";
 echo "</table>";
@@ -30,6 +32,19 @@ $(document).ready( function () {
 } );
 </script>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi consectetur lectus quis leo viverra iaculis. Donec at turpis orci. Cras odio ante, venenatis sed condimentum a, lobortis a nibh. Fusce aliquam metus vel ipsum ultricies dictum. Mauris ac tellus tincidunt eros pharetra dictum a vel nisi. Quisque quis est feugiat ex hendrerit facilisis a vel felis. Praesent eleifend lacinia rhoncus. Nunc ac dui diam. Duis sodales volutpat maximus. Vivamus laoreet bibendum consequat. Sed tempus lacus vitae magna ultrices aliquam.</p>
+<br>
+<br>
+The following figure shows the four most relevant macro economic indicators plotted against the percentage of internet users. 
 
+<img src="img/iu_vs_var.png" width="100%"><br>
+
+<br>
+<br>
+
+<h1><center>Outliers</center></h1>
+
+<p> Another goal of the analysis is to detect outliers, which in this context does not have a negative connotation but rather indicates the countries that are under- or outperforming. That is, an outlier represents a country that, in a particular year, exhibits poor socioeconomic performance but high telecom improvement or viceversa. We identify outliers when observe a relevant deviation between the model prediction and the actual observation. 
+</p>
+
+<img src="img/outliers.png" width="80%"><br>
 <?php include('footer.php') ?>
