@@ -38,10 +38,10 @@
 				</div>
 				<div class="collapse navbar-collapse text-center" id="myNavbar">
 				  <ul class="nav navbar-nav center-block text-center">
-				  	<li <?php if ($page_title == "Home")   echo 'class="active"';?>><a href="/">Home</a></li>
-					<li <?php if ($page_title == "Page 1") echo 'class="active"';?>><a href="/first_page.php">Variable Selection Process</a></li>
-					<li <?php if ($page_title == "Page 2") echo 'class="active"';?>><a href="/second_page.php">Influential Macroeconomic Indicators</a></li> 
-					<li <?php if ($page_title == "Page 3") echo 'class="active"';?>><a href="/third_page.php">LCC</a></li> 
+				  	<li <?php if ($page_title == "Home")   echo 'class="active"';?>><a href="/">Context & questions addressed</a></li>
+					<li <?php if ($page_title == "Page 1") echo 'class="active"';?>><a href="/first_page.php">Variable selection</a></li>
+					<li <?php if ($page_title == "Page 2") echo 'class="active"';?>><a href="/second_page.php">Q1: Exploring link ICT-other sectors</a></li> 
+					<li <?php if ($page_title == "Page 3") echo 'class="active"';?>><a href="/third_page.php">Q2: Identifying least connected countries</a></li> 
 				  </ul>
 				</div>
 		  </div>

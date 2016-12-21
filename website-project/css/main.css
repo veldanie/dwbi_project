@@ -50,7 +50,36 @@ textarea {
     color: #000;
     padding: 0.2em 0;
 }
+small {
+  font-size: 70%;
+}
 
+table {
+  table-layout: fixed; 
+  #border-collapse: collapse;
+  border: none !important;
+  width: 100%;
+}
+
+td,
+th {
+  #border-bottom: 1px solid #ddd;
+  width: 25%;
+  padding: 5px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+td{
+    height: 50px;
+}
+td{
+    text-align: center
+}
+td:first-child{
+    text-align: left;
+    padding-left:20px;
+}
 
 /* ==========================================================================
    Author's custom styles

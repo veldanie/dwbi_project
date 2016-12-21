@@ -2,7 +2,7 @@
 
 <h1><center>Influential Macro Economic Indicators</center></h1>
 
-<p> In order to indetify key macroeconomic indicators, percentage of internet users is modeled as a linear function of macroeconomic indicators. We implement a bayesian variable selection pocedure that allow us to indentify the most influential macro indicators. The following table exhibits the variables selected and the conrresponding regression coefficients. 
+<p> In order to identify key macroeconomic indicators, percentage of Internet users is modeled as a linear function of macroeconomic indicators. We implemented a bayesian variable selection procedure that allowed us to identify the most influential macro indicators. The following table exhibits the variables selected and the corresponding regression coefficients. 
 </p>
 <br>
 
@@ -34,16 +34,16 @@ $(document).ready( function () {
 
 <br>
 <br>
-The following figure shows the four most relevant macro economic indicators plotted against the percentage of internet users. 
+The following figure shows the four most relevant macro economic indicators plotted against the percentage of Internet users. 
 
-<img src="img/iu_vs_var.png" width="100%"><br>
+<img src="img/iu_vs_var.png"><br>
 
 <br>
 <br>
 
 <h1><center>Outliers</center></h1>
 
-<p> Another goal of the analysis is to detect outliers, which in this context does not have a negative connotation but rather indicates the countries that are under- or outperforming. That is, an outlier represents a country that, in a particular year, exhibits poor socioeconomic performance but high telecom improvement or viceversa. We identify outliers when observe a relevant deviation between the model prediction and the actual observation. 
+<p> Another goal of the analysis was to detect outliers, which in this context do not have a negative connotation but rather indicate the countries that are under- or outperforming. That is, an outlier represents a country that, in a particular year, exhibits poor socioeconomic performance but high ICT development or vice-versa. We identify outliers when observe a relevant deviation between the model prediction and the actual observation. 
 </p>
 
 <img src="img/outliers.png" width="80%"><br>
