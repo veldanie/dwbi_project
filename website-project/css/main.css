@@ -85,6 +85,18 @@ td:first-child{
    Author's custom styles
    ========================================================================== */
 
+#customlist{
+    list-style-type:none; /* delete default counter */
+    counter-reset:elementcounter; /* create custom counter and set it to 0 */
+    padding-left: 0;
+    text-indent: -30px;
+}
+#customlist > li:before{
+    content: "Q" counter(elementcounter) ". "; /* print out "Element " followed by the current counter value */
+    counter-increment:elementcounter; /* increment counter */
+    font-weight: bold;
+}
+
 body { font: 'Open Sans', sans-serif; }
 h1 { margin-top: 0; }
 p { font-size: 16px; margin: 20px 0; }

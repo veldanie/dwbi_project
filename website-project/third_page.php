@@ -8,7 +8,7 @@
 
 <img src="img/LCC_NotEstimated.png" width="100%"><br>
 
-<p>For several of the countries with unknown LCC status, data from the World Bank database and Google's price dataset are available. These data were used to fit a GLM model (family: binomial, link: logit) and  predict the LCC status of 22 countries with unknown value in 2014. </p>
+<p>For several of the countries with unknown LCC status, data from the World Bank database and Google's price dataset are available. These data were used to fit a generalized linear model (family: binomial, link: logit) and  predict the LCC status of 22 countries with unknown value in 2014. </p>
 
 <p>The ROC curve of the model shows that fit is rather good: almost 90 per cent of LCCs are identified without any false positive. Indeed, as we can see in the following charts, the separation of the observations using the logit model is almost complete and this explains the good results of the ROC curve.</p>
 

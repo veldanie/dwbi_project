@@ -1,6 +1,6 @@
 <?php $page_title = 'Page 1'; include('header.php') ?>
 
-<h1><center>Q1: Exploring link ICT-other sectors</center></h1>
+<h1><center>Indicator selection for Q1</center></h1>
 
 <p>
 Our goal is to identify key macroeconomic indicators strongly related to ICT development. The World Bank (WB) publishes information for 1440 indicators and 211 countries. The period under analysis is 2000-2015. ICT development is measured using the indicator "Percentage of Internet users per country" for each year. Other indicators would be possible (e.g. mobile penetration rate) and even combinations of indicators (e.g. ITU's ICT Development Index); the methodology developed in our project could also be applied to these other indicators, the only change would be the dependent variable used in the regression phase. 
@@ -34,7 +34,7 @@ We performed a regression analysis in a bayesian setting. Percentage of Internet
 
 <p>We concluded that the variables included in the model with highest posterior probability corresponded to the most influential macroeconomic indicators.</p>
 
-<h1><center>Q2: Identifying least connected countries</center></h1>
+<h1><center>Indicator selection for Q2</center></h1>
 
 <p>A second objective of the analysis was to fill in the data gaps for those countries with no data available on telecommunication performance.</p>
 
